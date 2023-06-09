@@ -1,5 +1,6 @@
 // ignore_for_file: avoid_print
 
+import 'package:expense_tracker/components/chart/chart.dart';
 import 'package:expense_tracker/components/expense_modal.dart';
 import 'package:expense_tracker/components/expenses_list.dart';
 import 'package:expense_tracker/models/expense.dart';
@@ -75,6 +76,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                 .isNotEmpty //only show expense list if it isn't empty
             ? Column(
                 children: [
+                  Chart(expenses: _registeredExpenses),
                   Expanded(
                       child: ExpenseList(
                           expenses: _registeredExpenses,
