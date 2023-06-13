@@ -1,7 +1,13 @@
 import 'package:expense_tracker/expenses_screen.dart';
 import 'package:flutter/material.dart';
+//import 'package:flutter/services.dart';
 
 void main() {
+  //make sure locking orientation then running app actually works
+  // WidgetsFlutterBinding.ensureInitialized();
+  //only allow portrait mode then run app
+  // SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+  //    .then((fn) => runApp(const MainApp()));
   runApp(const MainApp());
 }
 

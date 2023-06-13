@@ -64,6 +64,7 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
     return Scaffold(
         appBar: AppBar(
           title: const Text("Expense Tracker"),
@@ -72,19 +73,31 @@ class _ExpensesScreenState extends State<ExpensesScreen> {
                 onPressed: _openAddExpenseModal, icon: const Icon(Icons.add))
           ],
         ),
-        body: _registeredExpenses
-                .isNotEmpty //only show expense list if it isn't empty
+        body: width < 600 //only show expense list if it isn't empty
             ? Column(
                 children: [
                   Chart(expenses: _registeredExpenses),
-                  Expanded(
-                      child: ExpenseList(
-                          expenses: _registeredExpenses,
-                          onRemoveExpense: _removeExpense))
+                  _registeredExpenses.isNotEmpty
+                      ? Expanded(
+                          child: ExpenseList(
+                              expenses: _registeredExpenses,
+                              onRemoveExpense: _removeExpense))
+                      : const Center(
+                          child: Text('No expenses found, add some above.'),
+                        )
                 ],
               )
-            : const Center(
-                child: Text('No expenses found, add some above.'),
+            : Row(
+                children: [
+                  Expanded(child: Chart(expenses: _registeredExpenses)),
+                  _registeredExpenses.isNotEmpty
+                      ? Expanded(
+                          child: ExpenseList(
+                              expenses: _registeredExpenses,
+                              onRemoveExpense: _removeExpense))
+                      : const Center(
+                          child: Text('No expenses found, add some above.')),
+                ],
               ));
   }
 }

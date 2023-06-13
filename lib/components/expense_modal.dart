@@ -62,76 +62,116 @@ class _ExpenseModalState extends State<ExpenseModal> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        children: [
-          TextField(
-            maxLength: 50,
-            decoration: const InputDecoration(label: Text('Expense Name')),
-            controller: _titleController,
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  keyboardType: TextInputType.number,
-                  maxLength: 50,
-                  decoration: const InputDecoration(
-                      label: Text('Amount'), prefixText: '\$'),
-                  controller: _amountController,
-                ),
-              ),
-              Expanded(
-                  child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(_selectedDate == null
-                      ? 'Select Date'
-                      : formatter.format(_selectedDate!)),
-                  IconButton(
-                      onPressed: _presentDatePicker,
-                      icon: const Icon(Icons.calendar_month))
-                ],
-              )),
-            ],
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: DropdownButton(
-                    value: _selectedCategory,
-                    items: Category.values
-                        .map((category) => DropdownMenuItem(
-                            value: category,
-                            child:
-                                Text(category.name.toString().toUpperCase())))
-                        .toList(),
-                    onChanged: (value) {
-                      print(value);
-                      if (value == null) {
-                        return;
-                      }
-                      setState(() {
-                        _selectedCategory = value;
-                      });
-                    }),
-              ),
-              Expanded(
-                child: TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text("Cancel")),
-              ),
-              ElevatedButton(
-                  onPressed: _submitExpenseData,
-                  child: const Text('Save Expense'))
-            ],
-          )
-        ],
-      ),
+    final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
+
+    var nameField = TextField(
+      maxLength: 50,
+      decoration: const InputDecoration(label: Text('Expense Name')),
+      controller: _titleController,
     );
+    var amountField = TextField(
+      keyboardType: TextInputType.number,
+      maxLength: 50,
+      decoration:
+          const InputDecoration(label: Text('Amount'), prefixText: '\$'),
+      controller: _amountController,
+    );
+    var datePicker = Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        Text(_selectedDate == null
+            ? 'Select Date'
+            : formatter.format(_selectedDate!)),
+        IconButton(
+            onPressed: _presentDatePicker,
+            icon: const Icon(Icons.calendar_month))
+      ],
+    );
+    var categoryDropdown = DropdownButton(
+        value: _selectedCategory,
+        items: Category.values
+            .map((category) => DropdownMenuItem(
+                value: category,
+                child: Text(category.name.toString().toUpperCase())))
+            .toList(),
+        onChanged: (value) {
+          print(value);
+          if (value == null) {
+            return;
+          }
+          setState(() {
+            _selectedCategory = value;
+          });
+        });
+    var navigationRow = Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text("Cancel")),
+        const SizedBox(width: 10),
+        ElevatedButton(
+            onPressed: _submitExpenseData, child: const Text('Save Expense'))
+      ],
+    );
+
+
+
+
+    var portraitExpenseModal = Column(
+      children: [
+        nameField,
+        Row(
+          children: [
+            Expanded(child: amountField),
+            Expanded(child: datePicker),
+          ],
+        ),
+        Row(children: [categoryDropdown]),
+        navigationRow
+      ],
+    );
+
+    var landscapeExpenseModal = Column(
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(child: nameField),
+            const SizedBox(width: 10),
+            Expanded(child: amountField),
+          ],
+        ),
+        Row(
+          children: [
+            categoryDropdown,
+            Expanded(child: datePicker),
+          ],
+        ),
+        navigationRow
+      ],
+    );
+
+
+
+
+
+
+    return LayoutBuilder(builder: (ctx, constraints) {
+      final width = constraints.maxWidth;
+
+      return SizedBox(
+        height: double.infinity,
+        child: SingleChildScrollView(
+          child: Padding(
+              padding: EdgeInsets.fromLTRB(12, 8, 12, keyboardHeight + 4),
+              child:
+                  width <= 600 ? portraitExpenseModal : landscapeExpenseModal),
+        ),
+      );
+    });
   }
 
   @override
